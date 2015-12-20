@@ -23,16 +23,17 @@ namespace ComputerGadget.Counter
         private readonly string[] UnitsN = { "1K", "10K", "100K", "1M", "10M", "100M", "1G", "10G", "100G" };
 
         private NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
-        private Dictionary<string, List<long>> data = new Dictionary<string, List<long>>();
+        private Dictionary<string, List<double>> data = new Dictionary<string, List<double>>();
         private Dictionary<string, long> oldData = new Dictionary<string, long>();
         private Dictionary<string, long> unit = new Dictionary<string, long>();
         private Dictionary<string, OperationalStatus> status = new Dictionary<string, OperationalStatus>();
+        private long lastTime;
 
         public NetPerformanceCounter()
         {
             foreach (NetworkInterface ni in interfaces)
             {
-                data[ni.Name] = new List<long>();
+                data[ni.Name] = new List<double>();
                 status[ni.Name] = ni.OperationalStatus;
                 if (IsVailable(ni))
                 {
@@ -42,6 +43,7 @@ namespace ComputerGadget.Counter
                 else
                     oldData[ni.Name] = 0;
             }
+            lastTime = DateTime.Now.ToFileTime();
         }
 
         public int DataSize { set; get; }
@@ -101,28 +103,30 @@ namespace ComputerGadget.Counter
 
         private void UpdateData()
         {
+            long now = DateTime.Now.ToFileTime();
             foreach (NetworkInterface ni in interfaces)
             {
                 status[ni.Name] = ni.OperationalStatus;
                 if (IsVailable(ni))
                 {
                     IPv4InterfaceStatistics dat = ni.GetIPv4Statistics();
-                    long now = dat.BytesReceived;
-                    data[ni.Name].Add(now - oldData[ni.Name]);
-                    oldData[ni.Name] = now;
+                    long nowBytes = dat.BytesReceived;
+                    data[ni.Name].Add(((double)nowBytes - oldData[ni.Name]) / (now - lastTime));
+                    oldData[ni.Name] = nowBytes;
                 }
                 else
                     data[ni.Name].Add(0);
                 if (data[ni.Name].Count > DataSize)
                     data[ni.Name].RemoveRange(0, data[ni.Name].Count - DataSize);
             }
+            lastTime = now;
         }
 
         private void UpdateUnit()
         {
             foreach (var s in status)
             {
-                long max = data[s.Key].Max();
+                double max = data[s.Key].Max();
                 for (int i = 0; i < Units.Count; i++)
                     if (Units[i] > max)
                     {
