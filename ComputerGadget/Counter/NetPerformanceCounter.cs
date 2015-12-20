@@ -9,18 +9,32 @@ namespace ComputerGadget.Counter
 {
     class NetPerformanceCounter : ICounter
     {
-        private const long K = 1024 * 8;
+        private const long K = 1024;
+        private const long K5 = K * 5;
         private const long K10 = K * 10;
+        private const long K50 = K * 50;
         private const long K100 = K * 100;
         private const long M = K * K;
+        private const long M5 = M * 5;
         private const long M10 = M * 10;
+        private const long M50 = M * 10;
         private const long M100 = M * 100;
         private const long G = M * K;
+        private const long G5 = G * 5;
         private const long G10 = G * 10;
+        private const long G50 = G * 50;
         private const long G100 = G * 100;
 
-        private readonly List<long> Units = new List<long>() { K, K10, K100, M, M10, M100, G, G10, G100 };
-        private readonly string[] UnitsN = { "1K", "10K", "100K", "1M", "10M", "100M", "1G", "10G", "100G" };
+        private readonly List<long> Units = new List<long>() {
+            K, K5, K10, K50, K100,
+            M, M5, M10, M50, M100,
+            G, G5, G10, G50, G100
+        };
+        private readonly string[] UnitsN = {
+            "1K", "5K", "10K", "50K", "100K",
+            "1M", "5M", "10M", "50M", "100M",
+            "1G", "5G", "10G", "50G", "100G"
+        };
 
         private NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
         private Dictionary<string, List<double>> data = new Dictionary<string, List<double>>();
@@ -43,7 +57,7 @@ namespace ComputerGadget.Counter
                 else
                     oldData[ni.Name] = 0;
             }
-            lastTime = DateTime.Now.ToFileTime();
+            lastTime = DateTime.Now.Ticks;
         }
 
         public int DataSize { set; get; }
@@ -58,7 +72,7 @@ namespace ComputerGadget.Counter
             List<IReadOnlyList<double>> dat = new List<IReadOnlyList<double>>();
             foreach (var ni in interfaces)
                 if (IsVailable(ni))
-                    dat.Add(data[ni.Name].ConvertAll(v => (double)v / unit[ni.Name]));
+                    dat.Add(data[ni.Name].ConvertAll(v => v / unit[ni.Name]));
 
             return dat.ToArray();
         }
@@ -103,7 +117,8 @@ namespace ComputerGadget.Counter
 
         private void UpdateData()
         {
-            long now = DateTime.Now.ToFileTime();
+            long now = DateTime.Now.Ticks;
+            double dt = (now - lastTime) / 10000000.0;
             foreach (NetworkInterface ni in interfaces)
             {
                 status[ni.Name] = ni.OperationalStatus;
@@ -111,7 +126,9 @@ namespace ComputerGadget.Counter
                 {
                     IPv4InterfaceStatistics dat = ni.GetIPv4Statistics();
                     long nowBytes = dat.BytesReceived;
-                    data[ni.Name].Add(((double)nowBytes - oldData[ni.Name]) / (now - lastTime));
+                    double cdata = ((double)nowBytes - oldData[ni.Name]) / dt;
+                    Console.WriteLine(cdata);
+                    data[ni.Name].Add(cdata);
                     oldData[ni.Name] = nowBytes;
                 }
                 else
