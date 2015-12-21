@@ -33,9 +33,10 @@ namespace ComputerGadget.Counter
         private const long MB = 1024 * 1024;
 
         private long total;
+        private double lastData = 0;
         private List<double> data = new List<double>();
 
-        public string Message => $"{total} MB";
+        public string Message => $"{total} MB:{Math.Round(lastData * 100)}%";
 
         public RAMPerformanceCounter()
         {
@@ -54,7 +55,8 @@ namespace ComputerGadget.Counter
 
         private void UpdateData(int sampleSize)
         {
-            data.Add(GetPhysicalPercentage());
+            lastData = GetPhysicalPercentage();
+            data.Add(lastData);
             if (data.Count > sampleSize)
                 data.RemoveRange(0, data.Count - sampleSize);
         }

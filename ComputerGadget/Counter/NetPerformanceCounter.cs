@@ -39,7 +39,7 @@ namespace ComputerGadget.Counter
             "1G", "5G", "10G", "50G", "100G", "500G"
         };
 
-        private NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
+        private NetworkInterface[] interfaces;
         private Dictionary<string, List<double>> data = new Dictionary<string, List<double>>();
         private Dictionary<string, long> oldData = new Dictionary<string, long>();
         private Dictionary<string, long> limitUnit = new Dictionary<string, long>();
@@ -49,19 +49,6 @@ namespace ComputerGadget.Counter
 
         public NetPerformanceCounter()
         {
-            foreach (NetworkInterface ni in interfaces)
-            {
-                data[ni.Name] = new List<double>();
-                status[ni.Name] = ni.OperationalStatus;
-                available[ni.Name] = IsVailable(ni);
-                if (available[ni.Name])
-                {
-                    IPv4InterfaceStatistics dat = ni.GetIPv4Statistics();
-                    oldData[ni.Name] = dat.BytesReceived;
-                }
-                else
-                    oldData[ni.Name] = 0;
-            }
             lastTime = DateTime.Now.Ticks;
         }
 
@@ -81,6 +68,69 @@ namespace ComputerGadget.Counter
             return dat.ToArray();
         }
 
+        private void UpdateAvailable()
+        {
+            interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (NetworkInterface ni in interfaces)
+            {
+                if (!data.ContainsKey(ni.Name))
+                    data[ni.Name] = new List<double>();
+                status[ni.Name] = ni.OperationalStatus;
+                available[ni.Name] = IsVailable(ni);
+                oldData[ni.Name] = GetReceivedBytes(ni);
+            }
+        }
+
+        private void UpdateData(int sampleSize)
+        {
+            long now = DateTime.Now.Ticks;
+            double dt = (now - lastTime) / 10000000.0;
+            lastTime = now;
+            foreach (NetworkInterface ni in interfaces)
+            {
+                if (available[ni.Name])
+                {
+                    IPv4InterfaceStatistics dat = ni.GetIPv4Statistics();
+                    long nowBytes = dat.BytesReceived;
+                    double cdata = ((double)nowBytes - oldData[ni.Name]) / dt;
+                    data[ni.Name].Add(cdata);
+                    oldData[ni.Name] = nowBytes;
+                }
+                else
+                    data[ni.Name].Add(0);
+                if (data[ni.Name].Count > sampleSize)
+                    data[ni.Name].RemoveRange(0, data[ni.Name].Count - sampleSize);
+            }
+        }
+
+        private void UpdateUnit()
+        {
+            foreach (var s in status)
+            {
+                double max = data[s.Key].Max();
+                for (int i = 0; i < Units.Count; i++)
+                    if (Units[i] > max)
+                    {
+                        limitUnit[s.Key] = Units[i];
+                        break;
+                    }
+            }
+        }
+
+        private void UpdateMessage()
+        {
+            StringBuilder msg = new StringBuilder();
+            foreach (var ni in interfaces)
+                if (available[ni.Name])
+                {
+                    msg.Append(ni.Name);
+                    msg.Append(':');
+                    msg.Append(UnitsName[Units.FindIndex(v => v == limitUnit[ni.Name])]);
+                    msg.Append('|');
+                }
+            Message = msg.ToString(0, msg.Length - 1);
+        }
+
         private int AvailableCount()
         {
             int cnt = 0;
@@ -90,10 +140,12 @@ namespace ComputerGadget.Counter
             return cnt;
         }
 
-        private void UpdateAvailable()
+        private long GetReceivedBytes(NetworkInterface ni)
         {
-            foreach (NetworkInterface ni in interfaces)
-                available[ni.Name] = IsVailable(ni);
+            if (available[ni.Name])
+                return ni.GetIPv4Statistics().BytesReceived;
+            else
+                return 0;
         }
 
         private bool IsVailable(NetworkInterface ni)
@@ -132,57 +184,6 @@ namespace ComputerGadget.Counter
                 default:
                     return false;
             }
-        }
-
-        private void UpdateData(int sampleSize)
-        {
-            long now = DateTime.Now.Ticks;
-            double dt = (now - lastTime) / 10000000.0;
-            foreach (NetworkInterface ni in interfaces)
-            {
-                status[ni.Name] = ni.OperationalStatus;
-                if (available[ni.Name])
-                {
-                    IPv4InterfaceStatistics dat = ni.GetIPv4Statistics();
-                    long nowBytes = dat.BytesReceived;
-                    double cdata = ((double)nowBytes - oldData[ni.Name]) / dt;
-                    data[ni.Name].Add(cdata);
-                    oldData[ni.Name] = nowBytes;
-                }
-                else
-                    data[ni.Name].Add(0);
-                if (data[ni.Name].Count > sampleSize)
-                    data[ni.Name].RemoveRange(0, data[ni.Name].Count - sampleSize);
-            }
-            lastTime = now;
-        }
-
-        private void UpdateUnit()
-        {
-            foreach (var s in status)
-            {
-                double max = data[s.Key].Max();
-                for (int i = 0; i < Units.Count; i++)
-                    if (Units[i] > max)
-                    {
-                        limitUnit[s.Key] = Units[i];
-                        break;
-                    }
-            }
-        }
-
-        private void UpdateMessage()
-        {
-            StringBuilder msg = new StringBuilder();
-            foreach (var ni in interfaces)
-                if (available[ni.Name])
-                {
-                    msg.Append(ni.Name);
-                    msg.Append(':');
-                    msg.Append(UnitsName[Units.FindIndex(v => v == limitUnit[ni.Name])]);
-                    msg.Append('|');
-                }
-            Message = msg.ToString(0, msg.Length - 1);
         }
     }
 }
