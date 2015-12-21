@@ -57,7 +57,7 @@ namespace ComputerGadget.Counter
         public IReadOnlyList<double>[] UpdateAndGetData(int sampleSize)
         {
             UpdateAvailable();
-            UpdateData((int)Math.Ceiling((double)sampleSize/AvailableCount()));
+            UpdateData((int)Math.Ceiling((double)sampleSize / AvailableCount()));
             UpdateUnit();
             UpdateMessage();
 
@@ -73,11 +73,13 @@ namespace ComputerGadget.Counter
             interfaces = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface ni in interfaces)
             {
-                if (!data.ContainsKey(ni.Name))
-                    data[ni.Name] = new List<double>();
                 status[ni.Name] = ni.OperationalStatus;
                 available[ni.Name] = IsVailable(ni);
-                oldData[ni.Name] = GetReceivedBytes(ni);
+                if (!data.ContainsKey(ni.Name))
+                {
+                    data[ni.Name] = new List<double>();
+                    oldData[ni.Name] = GetReceivedBytes(ni);
+                }
             }
         }
 
@@ -90,9 +92,9 @@ namespace ComputerGadget.Counter
             {
                 if (available[ni.Name])
                 {
-                    IPv4InterfaceStatistics dat = ni.GetIPv4Statistics();
-                    long nowBytes = dat.BytesReceived;
-                    double cdata = ((double)nowBytes - oldData[ni.Name]) / dt;
+                    long nowBytes = ni.GetIPv4Statistics().BytesReceived;
+                    double cdata = (nowBytes - oldData[ni.Name]) / dt;
+                    Console.WriteLine(nowBytes - oldData[ni.Name]);
                     data[ni.Name].Add(cdata);
                     oldData[ni.Name] = nowBytes;
                 }
