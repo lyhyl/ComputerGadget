@@ -32,12 +32,15 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ComputerGadget));
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.iconMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.topToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.speedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.highToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.normalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.topToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.styleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stripToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iconMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,11 +53,43 @@
             // iconMenu
             // 
             this.iconMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.styleToolStripMenuItem,
             this.speedToolStripMenuItem,
             this.topToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.iconMenu.Name = "iconMenu";
-            this.iconMenu.Size = new System.Drawing.Size(153, 92);
+            this.iconMenu.Size = new System.Drawing.Size(153, 114);
+            // 
+            // speedToolStripMenuItem
+            // 
+            this.speedToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.highToolStripMenuItem,
+            this.normalToolStripMenuItem,
+            this.lowToolStripMenuItem});
+            this.speedToolStripMenuItem.Name = "speedToolStripMenuItem";
+            this.speedToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.speedToolStripMenuItem.Text = "&Speed";
+            // 
+            // highToolStripMenuItem
+            // 
+            this.highToolStripMenuItem.Name = "highToolStripMenuItem";
+            this.highToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.highToolStripMenuItem.Text = "&High";
+            this.highToolStripMenuItem.Click += new System.EventHandler(this.highToolStripMenuItem_Click);
+            // 
+            // normalToolStripMenuItem
+            // 
+            this.normalToolStripMenuItem.Name = "normalToolStripMenuItem";
+            this.normalToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.normalToolStripMenuItem.Text = "&Normal";
+            this.normalToolStripMenuItem.Click += new System.EventHandler(this.normalToolStripMenuItem_Click);
+            // 
+            // lowToolStripMenuItem
+            // 
+            this.lowToolStripMenuItem.Name = "lowToolStripMenuItem";
+            this.lowToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.lowToolStripMenuItem.Text = "&Low";
+            this.lowToolStripMenuItem.Click += new System.EventHandler(this.lowToolStripMenuItem_Click);
             // 
             // topToolStripMenuItem
             // 
@@ -70,36 +105,28 @@
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // speedToolStripMenuItem
+            // styleToolStripMenuItem
             // 
-            this.speedToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.highToolStripMenuItem,
-            this.normalToolStripMenuItem,
-            this.lowToolStripMenuItem});
-            this.speedToolStripMenuItem.Name = "speedToolStripMenuItem";
-            this.speedToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.speedToolStripMenuItem.Text = "&Speed";
+            this.styleToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dotToolStripMenuItem,
+            this.stripToolStripMenuItem});
+            this.styleToolStripMenuItem.Name = "styleToolStripMenuItem";
+            this.styleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.styleToolStripMenuItem.Text = "St&yle";
             // 
-            // highToolStripMenuItem
+            // dotToolStripMenuItem
             // 
-            this.highToolStripMenuItem.Name = "highToolStripMenuItem";
-            this.highToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.highToolStripMenuItem.Text = "&High";
-            this.highToolStripMenuItem.Click += new System.EventHandler(this.highToolStripMenuItem_Click);
+            this.dotToolStripMenuItem.Name = "dotToolStripMenuItem";
+            this.dotToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.dotToolStripMenuItem.Text = "&Dot";
+            this.dotToolStripMenuItem.Click += new System.EventHandler(this.dotToolStripMenuItem_Click);
             // 
-            // normalToolStripMenuItem
+            // stripToolStripMenuItem
             // 
-            this.normalToolStripMenuItem.Name = "normalToolStripMenuItem";
-            this.normalToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.normalToolStripMenuItem.Text = "&Normal";
-            this.normalToolStripMenuItem.Click += new System.EventHandler(this.normalToolStripMenuItem_Click);
-            // 
-            // lowToolStripMenuItem
-            // 
-            this.lowToolStripMenuItem.Name = "lowToolStripMenuItem";
-            this.lowToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.lowToolStripMenuItem.Text = "&Low";
-            this.lowToolStripMenuItem.Click += new System.EventHandler(this.lowToolStripMenuItem_Click);
+            this.stripToolStripMenuItem.Name = "stripToolStripMenuItem";
+            this.stripToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.stripToolStripMenuItem.Text = "&Strip";
+            this.stripToolStripMenuItem.Click += new System.EventHandler(this.stripToolStripMenuItem_Click);
             // 
             // ComputerGadget
             // 
@@ -132,6 +159,9 @@
         private System.Windows.Forms.ToolStripMenuItem highToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem normalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem styleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dotToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stripToolStripMenuItem;
     }
 }
 

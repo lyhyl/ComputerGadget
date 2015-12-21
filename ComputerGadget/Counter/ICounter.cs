@@ -4,8 +4,7 @@ namespace ComputerGadget.Counter
 {
     interface ICounter
     {
-        IReadOnlyList<double>[] UpdateAndGetData();
-        int DataSize { get; set; }
+        IReadOnlyList<double>[] UpdateAndGetData(int sampleSize);
         string Message { get; }
     }
 }

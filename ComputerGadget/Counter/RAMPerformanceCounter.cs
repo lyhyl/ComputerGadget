@@ -35,8 +35,6 @@ namespace ComputerGadget.Counter
         private long total;
         private List<double> data = new List<double>();
 
-        public int DataSize { set; get; }
-
         public string Message => $"{total} MB";
 
         public RAMPerformanceCounter()
@@ -48,17 +46,17 @@ namespace ComputerGadget.Counter
                 total = long.MaxValue;
         }
 
-        public IReadOnlyList<double>[] UpdateAndGetData()
+        public IReadOnlyList<double>[] UpdateAndGetData(int sampleSize)
         {
-            UpdateData();
+            UpdateData(sampleSize);
             return new IReadOnlyList<double>[] { data };
         }
 
-        private void UpdateData()
+        private void UpdateData(int sampleSize)
         {
             data.Add(GetPhysicalPercentage());
-            if (data.Count > DataSize)
-                data.RemoveRange(0, data.Count - DataSize);
+            if (data.Count > sampleSize)
+                data.RemoveRange(0, data.Count - sampleSize);
         }
 
         private double GetPhysicalPercentage()

@@ -39,8 +39,9 @@ namespace ComputerGadget.Counter
         private NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
         private Dictionary<string, List<double>> data = new Dictionary<string, List<double>>();
         private Dictionary<string, long> oldData = new Dictionary<string, long>();
-        private Dictionary<string, long> unit = new Dictionary<string, long>();
+        private Dictionary<string, long> limitUnit = new Dictionary<string, long>();
         private Dictionary<string, OperationalStatus> status = new Dictionary<string, OperationalStatus>();
+        private Dictionary<string, bool> available = new Dictionary<string, bool>();
         private long lastTime;
 
         public NetPerformanceCounter()
@@ -49,7 +50,8 @@ namespace ComputerGadget.Counter
             {
                 data[ni.Name] = new List<double>();
                 status[ni.Name] = ni.OperationalStatus;
-                if (IsVailable(ni))
+                available[ni.Name] = IsVailable(ni);
+                if (available[ni.Name])
                 {
                     IPv4InterfaceStatistics dat = ni.GetIPv4Statistics();
                     oldData[ni.Name] = dat.BytesReceived;
@@ -60,21 +62,35 @@ namespace ComputerGadget.Counter
             lastTime = DateTime.Now.Ticks;
         }
 
-        public int DataSize { set; get; }
-
         public string Message { set; get; }
 
-        public IReadOnlyList<double>[] UpdateAndGetData()
+        public IReadOnlyList<double>[] UpdateAndGetData(int sampleSize)
         {
-            UpdateData();
+            UpdateAvailable();
+            UpdateData((int)Math.Ceiling((double)sampleSize/AvailableCount()));
             UpdateUnit();
             UpdateMessage();
+
             List<IReadOnlyList<double>> dat = new List<IReadOnlyList<double>>();
             foreach (var ni in interfaces)
-                if (IsVailable(ni))
-                    dat.Add(data[ni.Name].ConvertAll(v => v / unit[ni.Name]));
-
+                if (available[ni.Name])
+                    dat.Add(data[ni.Name].ConvertAll(v => v / limitUnit[ni.Name]));
             return dat.ToArray();
+        }
+
+        private int AvailableCount()
+        {
+            int cnt = 0;
+            foreach (var a in available)
+                if (a.Value)
+                    cnt++;
+            return cnt;
+        }
+
+        private void UpdateAvailable()
+        {
+            foreach (NetworkInterface ni in interfaces)
+                available[ni.Name] = IsVailable(ni);
         }
 
         private bool IsVailable(NetworkInterface ni)
@@ -115,26 +131,25 @@ namespace ComputerGadget.Counter
             }
         }
 
-        private void UpdateData()
+        private void UpdateData(int sampleSize)
         {
             long now = DateTime.Now.Ticks;
             double dt = (now - lastTime) / 10000000.0;
             foreach (NetworkInterface ni in interfaces)
             {
                 status[ni.Name] = ni.OperationalStatus;
-                if (IsVailable(ni))
+                if (available[ni.Name])
                 {
                     IPv4InterfaceStatistics dat = ni.GetIPv4Statistics();
                     long nowBytes = dat.BytesReceived;
                     double cdata = ((double)nowBytes - oldData[ni.Name]) / dt;
-                    Console.WriteLine(cdata);
                     data[ni.Name].Add(cdata);
                     oldData[ni.Name] = nowBytes;
                 }
                 else
                     data[ni.Name].Add(0);
-                if (data[ni.Name].Count > DataSize)
-                    data[ni.Name].RemoveRange(0, data[ni.Name].Count - DataSize);
+                if (data[ni.Name].Count > sampleSize)
+                    data[ni.Name].RemoveRange(0, data[ni.Name].Count - sampleSize);
             }
             lastTime = now;
         }
@@ -147,7 +162,7 @@ namespace ComputerGadget.Counter
                 for (int i = 0; i < Units.Count; i++)
                     if (Units[i] > max)
                     {
-                        unit[s.Key] = Units[i];
+                        limitUnit[s.Key] = Units[i];
                         break;
                     }
             }
@@ -157,11 +172,11 @@ namespace ComputerGadget.Counter
         {
             StringBuilder msg = new StringBuilder();
             foreach (var ni in interfaces)
-                if (IsVailable(ni))
+                if (available[ni.Name])
                 {
                     msg.Append(ni.Name);
                     msg.Append(':');
-                    msg.Append(UnitsN[Units.FindIndex(v => v == unit[ni.Name])]);
+                    msg.Append(UnitsN[Units.FindIndex(v => v == limitUnit[ni.Name])]);
                     msg.Append('|');
                 }
             Message = msg.ToString(0, msg.Length - 1);

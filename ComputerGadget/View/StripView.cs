@@ -3,9 +3,9 @@ using System.Drawing;
 
 namespace ComputerGadget.View
 {
-    class DotView : SimpleView
+    class StripView : SimpleView
     {
-        public DotView(float fontSize) : base(fontSize)
+        public StripView(float fontSize):base(fontSize)
         {
         }
 
@@ -13,7 +13,8 @@ namespace ComputerGadget.View
         {
             float l = (float)Math.Round(x - DotSize / 2.0f);
             float t = (float)Math.Round(h - DotSize / 2.0f);
-            RectangleF dot = new RectangleF(l, t, DotSize, DotSize);
+            RectangleF dot = new RectangleF(l, t, DotSize, clip.Bottom - Padding - h);
+            dot.Height = (float)Math.Ceiling(dot.Bottom) - h;
             graphics.FillRectangle(Brushes.White, dot);
         }
     }

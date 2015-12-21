@@ -53,9 +53,9 @@ namespace ComputerGadget
 
             counters = new ICounter[]
             {
-                new CPUPerformanceCounter() { DataSize = 1000 },
-                new RAMPerformanceCounter() { DataSize = 1000 },
-                new NetPerformanceCounter() { DataSize = 1000 },
+                new CPUPerformanceCounter(),
+                new RAMPerformanceCounter(),
+                new NetPerformanceCounter(),
             };
             viewer = new DotView(config.FontSize);
 
@@ -109,16 +109,15 @@ namespace ComputerGadget
 
             e.Graphics.FillRectangle(new SolidBrush(transparencyKey), e.ClipRectangle);
             Rectangle clip = new Rectangle(0, 0, itemWidth, itemHeight);
-
-            //GraphicsPath path = CreateRoundedRectanglePath(clip, 5);
+            
             GraphicsPath path = new GraphicsPath();
             path.AddRectangle(clip);
             
             foreach (var counter in counters)
             {
                 e.Graphics.FillPath(Brushes.Black, path);
-                viewer.Draw(e.Graphics, clip, counter.UpdateAndGetData(), counter.Message);
-                e.Graphics.TranslateTransform(0, (itemHeight + padding));
+                viewer.Draw(e.Graphics, clip, counter);
+                e.Graphics.TranslateTransform(0, itemHeight + padding);
             }
         }
 
@@ -183,21 +182,6 @@ namespace ComputerGadget
             return new Point(x, y);
         }
 
-        private GraphicsPath CreateRoundedRectanglePath(Rectangle rect, int cornerRadius)
-        {
-            GraphicsPath roundedRect = new GraphicsPath();
-            roundedRect.AddArc(rect.X, rect.Y, cornerRadius * 2, cornerRadius * 2, 180, 90);
-            roundedRect.AddLine(rect.X + cornerRadius, rect.Y, rect.Right - cornerRadius * 2, rect.Y);
-            roundedRect.AddArc(rect.X + rect.Width - cornerRadius * 2, rect.Y, cornerRadius * 2, cornerRadius * 2, 270, 90);
-            roundedRect.AddLine(rect.Right, rect.Y + cornerRadius * 2, rect.Right, rect.Y + rect.Height - cornerRadius * 2);
-            roundedRect.AddArc(rect.X + rect.Width - cornerRadius * 2, rect.Y + rect.Height - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 0, 90);
-            roundedRect.AddLine(rect.Right - cornerRadius * 2, rect.Bottom, rect.X + cornerRadius * 2, rect.Bottom);
-            roundedRect.AddArc(rect.X, rect.Bottom - cornerRadius * 2, cornerRadius * 2, cornerRadius * 2, 90, 90);
-            roundedRect.AddLine(rect.X, rect.Bottom - cornerRadius * 2, rect.X, rect.Y + cornerRadius * 2);
-            roundedRect.CloseFigure();
-            return roundedRect;
-        }
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
@@ -222,6 +206,20 @@ namespace ComputerGadget
         private void highToolStripMenuItem_Click(object sender, EventArgs e)
         {
             timer.Interval = highUpdateTime;
+        }
+
+        private void dotToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (viewer is DotView)
+                return;
+            viewer = new DotView(config.FontSize);
+        }
+
+        private void stripToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (viewer is StripView)
+                return;
+            viewer = new StripView(config.FontSize);
         }
     }
 }

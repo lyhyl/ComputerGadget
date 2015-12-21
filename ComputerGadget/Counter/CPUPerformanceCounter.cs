@@ -14,8 +14,6 @@ namespace ComputerGadget.Counter
         private Dictionary<string, CounterSample> samples = new Dictionary<string, CounterSample>();
         private Dictionary<string, List<double>> data = new Dictionary<string, List<double>>();
 
-        public int DataSize { set; get; }
-
         public string Message
         {
             get
@@ -43,9 +41,9 @@ namespace ComputerGadget.Counter
         }
 
 
-        public IReadOnlyList<double>[] UpdateAndGetData()
+        public IReadOnlyList<double>[] UpdateAndGetData(int sampleSize)
         {
-            UpdateData();
+            UpdateData((int)Math.Ceiling((double)sampleSize / data.Count));
             IReadOnlyList<double>[] dat = new IReadOnlyList<double>[data.Count];
             int i = 0;
             foreach (var d in data)
@@ -53,7 +51,7 @@ namespace ComputerGadget.Counter
             return dat;
         }
 
-        private void UpdateData()
+        private void UpdateData(int sampleSize)
         {
             foreach (var s in instances)
                 if (IsCore(s))
@@ -61,8 +59,8 @@ namespace ComputerGadget.Counter
                     counter.InstanceName = s;
                     data[s].Add(Calculate(samples[s], counter.NextSample()));
                     samples[s] = counter.NextSample();
-                    if (data[s].Count > DataSize)
-                        data[s].RemoveRange(0, data[s].Count - DataSize);
+                    if (data[s].Count > sampleSize)
+                        data[s].RemoveRange(0, data[s].Count - sampleSize);
                 }
         }
 

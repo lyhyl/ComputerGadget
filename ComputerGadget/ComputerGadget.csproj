@@ -59,11 +59,13 @@
     <Compile Include="Counter\CPUPerformanceCounter.cs" />
     <Compile Include="Counter\NetPerformanceCounter.cs" />
     <Compile Include="View\DotView.cs" />
+    <Compile Include="View\SimpleView.cs" />
     <Compile Include="View\IDataViewer.cs" />
     <Compile Include="Counter\ICounter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Counter\RAMPerformanceCounter.cs" />
+    <Compile Include="View\StripView.cs" />
     <EmbeddedResource Include="ComputerGadget.resx">
       <DependentUpon>ComputerGadget.cs</DependentUpon>
     </EmbeddedResource>
