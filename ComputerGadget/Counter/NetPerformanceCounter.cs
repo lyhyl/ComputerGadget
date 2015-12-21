@@ -14,26 +14,29 @@ namespace ComputerGadget.Counter
         private const long K10 = K * 10;
         private const long K50 = K * 50;
         private const long K100 = K * 100;
+        private const long K500 = K * 500;
         private const long M = K * K;
         private const long M5 = M * 5;
         private const long M10 = M * 10;
         private const long M50 = M * 10;
         private const long M100 = M * 100;
+        private const long M500 = M * 500;
         private const long G = M * K;
         private const long G5 = G * 5;
         private const long G10 = G * 10;
         private const long G50 = G * 50;
         private const long G100 = G * 100;
+        private const long G500 = G * 500;
 
         private readonly List<long> Units = new List<long>() {
-            K, K5, K10, K50, K100,
-            M, M5, M10, M50, M100,
-            G, G5, G10, G50, G100
+            K, K5, K10, K50, K100, K500,
+            M, M5, M10, M50, M100, M500,
+            G, G5, G10, G50, G100, G500
         };
-        private readonly string[] UnitsN = {
-            "1K", "5K", "10K", "50K", "100K",
-            "1M", "5M", "10M", "50M", "100M",
-            "1G", "5G", "10G", "50G", "100G"
+        private readonly string[] UnitsName = {
+            "1K", "5K", "10K", "50K", "100K", "500K",
+            "1M", "5M", "10M", "50M", "100M", "500M",
+            "1G", "5G", "10G", "50G", "100G", "500G"
         };
 
         private NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
@@ -176,7 +179,7 @@ namespace ComputerGadget.Counter
                 {
                     msg.Append(ni.Name);
                     msg.Append(':');
-                    msg.Append(UnitsN[Units.FindIndex(v => v == limitUnit[ni.Name])]);
+                    msg.Append(UnitsName[Units.FindIndex(v => v == limitUnit[ni.Name])]);
                     msg.Append('|');
                 }
             Message = msg.ToString(0, msg.Length - 1);
