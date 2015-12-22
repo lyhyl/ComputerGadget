@@ -11,11 +11,10 @@ namespace ComputerGadget.View
         private Font messageFont;
 
         protected int DotSize { private set; get; } = 1;
-        protected float Padding { private set; get; } = 2;
+        protected float Padding { private set; get; } = 1;
 
         private Theme theme = Theme.DarkTheme;
-        private Brush bgbrush, fgbrush;
-        private Pen bgpen, fgpen;
+        private Brush bgbrush;
         public Theme Theme
         {
             set
@@ -32,10 +31,7 @@ namespace ComputerGadget.View
         {
             messageFont = new Font(SystemFonts.DefaultFont.FontFamily, fontSize);
             bgbrush = new SolidBrush(Theme.BackgroundColor);
-            fgbrush = new SolidBrush(Theme.ForegroundColor);
-            bgpen = new Pen(Theme.BackgroundColor);
-            fgpen = new Pen(Theme.ForegroundColor);
-    }
+        }
 
         public void Draw(Graphics graphics, Rectangle clip, ICounter counter)
         {
@@ -56,13 +52,7 @@ namespace ComputerGadget.View
         private void UpdatePenAndBrush()
         {
             bgbrush?.Dispose();
-            fgbrush?.Dispose();
-            bgpen?.Dispose();
-            fgpen?.Dispose();
             bgbrush = new SolidBrush(Theme.BackgroundColor);
-            fgbrush = new SolidBrush(Theme.ForegroundColor);
-            bgpen = new Pen(Theme.BackgroundColor);
-            fgpen = new Pen(Theme.ForegroundColor);
         }
 
         private void DrawData(Graphics graphics, Rectangle clip, IReadOnlyList<double>[] data, float width)
@@ -89,7 +79,7 @@ namespace ComputerGadget.View
                 {
                     float x = (float)Math.Round(width * i);
                     PointF top = new PointF(x, Padding);
-                    PointF bottom = new PointF(x, clip.Bottom - Padding);
+                    PointF bottom = new PointF(x, clip.Bottom - Padding - 1);
                     graphics.DrawLine(fpen, top, bottom);
                     PointF topl = new PointF(x - 1, 0);
                     PointF bottoml = new PointF(x - 1, clip.Bottom - 1);
@@ -124,9 +114,6 @@ namespace ComputerGadget.View
             {
                 messageFont.Dispose();
                 bgbrush?.Dispose();
-                fgbrush?.Dispose();
-                bgpen?.Dispose();
-                fgpen?.Dispose();
             }
             
             disposed = true;

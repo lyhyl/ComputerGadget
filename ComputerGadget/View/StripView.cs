@@ -14,10 +14,8 @@ namespace ComputerGadget.View
 
         protected override void DrawSingleData(Graphics graphics, Rectangle clip, float x, float h)
         {
-            float l = (float)Math.Round(x - DotSize / 2.0f);
-            float t = (float)Math.Round(h - DotSize / 2.0f);
             PointF pd = new PointF(x, h);
-            PointF pp = new PointF(x, clip.Bottom - Padding);
+            PointF pp = new PointF(x, clip.Bottom - Padding - 1);
             graphics.DrawLine(pen, pd, pp);
         }
 
@@ -36,7 +34,7 @@ namespace ComputerGadget.View
 
         private void UpdatePens()
         {
-            pen = new Pen(Theme.ForegroundColor);
+            pen = new Pen(Theme.ForegroundColor, DotSize);
         }
     }
 }

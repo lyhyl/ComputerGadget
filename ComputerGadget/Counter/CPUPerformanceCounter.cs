@@ -10,8 +10,8 @@ namespace ComputerGadget.Counter
     {
         private bool disposed = false;
 
-        private PerformanceCounter counter = new PerformanceCounter("Processor Information", "% Processor Time");
-        private PerformanceCounterCategory category = new PerformanceCounterCategory("Processor Information");
+        private PerformanceCounter counter = new PerformanceCounter("Processor", "% Processor Time");
+        private PerformanceCounterCategory category = new PerformanceCounterCategory("Processor");
         private string[] instances = null;
         private Dictionary<string, CounterSample> samples = new Dictionary<string, CounterSample>();
         private Dictionary<string, List<double>> data = new Dictionary<string, List<double>>();
@@ -59,8 +59,9 @@ namespace ComputerGadget.Counter
                 if (IsCore(s))
                 {
                     counter.InstanceName = s;
-                    data[s].Add(Calculate(samples[s], counter.NextSample()));
-                    samples[s] = counter.NextSample();
+                    CounterSample newSample = counter.NextSample();
+                    data[s].Add(Calculate(samples[s], newSample));
+                    samples[s] = newSample;
                     if (data[s].Count > sampleSize)
                         data[s].RemoveRange(0, data[s].Count - sampleSize);
                 }
@@ -73,7 +74,10 @@ namespace ComputerGadget.Counter
             double difference = newSample.RawValue - oldSample.RawValue;
             double timeInterval = newSample.TimeStamp100nSec - oldSample.TimeStamp100nSec;
             if (timeInterval != 0)
-                return 1 - difference / timeInterval;
+            {
+                double v = difference / timeInterval;
+                return 1 - Math.Min(Math.Max(0, v), 1);
+            }
             else
                 return 0;
         }
