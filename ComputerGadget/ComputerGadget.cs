@@ -1,6 +1,7 @@
 ﻿using ComputerGadget.Counter;
 using ComputerGadget.View;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -29,7 +30,7 @@ namespace ComputerGadget
         private Config config = new Config();
 
         private Timer timer = new Timer();
-        private ICounter[] counters = null;
+        private List<ICounter> counters = null;
         private IDataViwer viewer = null;
 
         private double targetOpacity = .7;
@@ -51,7 +52,7 @@ namespace ComputerGadget
             easeOpacityTimer.Interval = easeTimePerTick;
             easeOpacityTimer.Tick += EaseOpacityTimer_Tick;
 
-            counters = new ICounter[]
+            counters = new List<ICounter>()
             {
                 new CPUPerformanceCounter(),
                 new RAMPerformanceCounter(),
@@ -60,7 +61,7 @@ namespace ComputerGadget
             viewer = new DotView(config.FontSize);
 
             Width = itemWidth;
-            Height = itemHeight * counters.Length + padding * (counters.Length - 1);
+            Height = itemHeight * counters.Count + padding * (counters.Count - 1);
         }
 
         protected override CreateParams CreateParams
@@ -110,12 +111,8 @@ namespace ComputerGadget
             e.Graphics.FillRectangle(new SolidBrush(transparencyKey), e.ClipRectangle);
             Rectangle clip = new Rectangle(0, 0, itemWidth, itemHeight);
             
-            GraphicsPath path = new GraphicsPath();
-            path.AddRectangle(clip);
-            
             foreach (var counter in counters)
             {
-                e.Graphics.FillPath(Brushes.Black, path);
                 viewer.Draw(e.Graphics, clip, counter);
                 e.Graphics.TranslateTransform(0, itemHeight + padding);
             }
@@ -208,6 +205,16 @@ namespace ComputerGadget
             timer.Interval = highUpdateTime;
         }
 
+        private void ExtendDispose(bool disposing)
+        {
+            if(disposing)
+            {
+                foreach (var counter in counters)
+                    (counters as IDisposable)?.Dispose();
+                (viewer as IDisposable)?.Dispose();
+            }
+        }
+
         private void dotToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (viewer is DotView)
@@ -220,6 +227,16 @@ namespace ComputerGadget
             if (viewer is StripView)
                 return;
             viewer = new StripView(config.FontSize);
+        }
+
+        private void darkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            viewer.Theme = Theme.DarkTheme;
+        }
+
+        private void lightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            viewer.Theme = Theme.LightTheme;
         }
     }
 }

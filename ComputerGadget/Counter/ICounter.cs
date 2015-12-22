@@ -2,7 +2,7 @@
 
 namespace ComputerGadget.Counter
 {
-    interface ICounter
+    public interface ICounter
     {
         IReadOnlyList<double>[] UpdateAndGetData(int sampleSize);
         string Message { get; }

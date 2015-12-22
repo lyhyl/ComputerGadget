@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ComputerGadget.Counter
 {
-    class NetPerformanceCounter : ICounter
+    public sealed class NetPerformanceCounter : ICounter
     {
         private const long K = 1024;
         private const long K5 = K * 5;
@@ -94,7 +94,6 @@ namespace ComputerGadget.Counter
                 {
                     long nowBytes = ni.GetIPv4Statistics().BytesReceived;
                     double cdata = (nowBytes - oldData[ni.Name]) / dt;
-                    Console.WriteLine(nowBytes - oldData[ni.Name]);
                     data[ni.Name].Add(cdata);
                     oldData[ni.Name] = nowBytes;
                 }

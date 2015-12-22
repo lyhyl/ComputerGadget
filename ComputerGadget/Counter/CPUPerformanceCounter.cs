@@ -6,8 +6,10 @@ using System.Text;
 
 namespace ComputerGadget.Counter
 {
-    class CPUPerformanceCounter : ICounter
+    public sealed class CPUPerformanceCounter : ICounter, IDisposable
     {
+        private bool disposed = false;
+
         private PerformanceCounter counter = new PerformanceCounter("Processor Information", "% Processor Time");
         private PerformanceCounterCategory category = new PerformanceCounterCategory("Processor Information");
         private string[] instances = null;
@@ -74,6 +76,16 @@ namespace ComputerGadget.Counter
                 return 1 - difference / timeInterval;
             else
                 return 0;
+        }
+
+        public void Dispose()
+        {
+            if (disposed)
+                return;
+
+            counter.Dispose();
+            GC.SuppressFinalize(this);
+            disposed = true;
         }
     }
 }

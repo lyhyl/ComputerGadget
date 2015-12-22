@@ -5,11 +5,14 @@ using System.Runtime.InteropServices;
 
 namespace ComputerGadget.Counter
 {
-    public class RAMPerformanceCounter : ICounter
+    public sealed class RAMPerformanceCounter : ICounter
     {
-        [DllImport("psapi.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetPerformanceInfo([Out] out RawRAMInfo raw, [In] int Size);
+        private static class NativeMethods
+        {
+            [DllImport("psapi.dll", SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.Bool)]
+            public static extern bool GetPerformanceInfo([Out] out RawRAMInfo raw, [In] int Size);
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct RawRAMInfo
@@ -41,7 +44,7 @@ namespace ComputerGadget.Counter
         public RAMPerformanceCounter()
         {
             RawRAMInfo raw = new RawRAMInfo();
-            if (GetPerformanceInfo(out raw, Marshal.SizeOf(raw)))
+            if (NativeMethods.GetPerformanceInfo(out raw, Marshal.SizeOf(raw)))
                 total = raw.PhysicalTotal.ToInt64() * raw.PageSize.ToInt64() / MB;
             else
                 total = long.MaxValue;
@@ -64,7 +67,7 @@ namespace ComputerGadget.Counter
         private double GetPhysicalPercentage()
         {
             RawRAMInfo raw = new RawRAMInfo();
-            if (GetPerformanceInfo(out raw, Marshal.SizeOf(raw)))
+            if (NativeMethods.GetPerformanceInfo(out raw, Marshal.SizeOf(raw)))
             {
                 long av = raw.PhysicalAvailable.ToInt64() * raw.PageSize.ToInt64() / MB;
                 return (double)(total - av) / total;

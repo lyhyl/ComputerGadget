@@ -14,36 +14,38 @@ namespace ComputerGadget
 
         public Config()
         {
-            using (var stream = File.Open(".\\cfg.xml", FileMode.OpenOrCreate))
+            using (Stream stream = File.Open(".\\cfg.xml", FileMode.OpenOrCreate))
             {
-                bool succ = false;
-                using (XmlReader cfgFile = XmlReader.Create(stream))
-                    succ = TryRead(cfgFile);
-                if(!succ)
+                try
                 {
-                    using (XmlWriter ou = XmlWriter.Create(stream))
-                    {
-                        ou.WriteStartElement("root");
-                        ou.WriteElementString("position", "10");
-                        ou.WriteElementString("font-size", "6");
-                        ou.WriteEndElement();
-                    }
+                    ReadProperties(stream);
+                }
+                catch (Exception)
+                {
+                    CreateDefaultConfigFile(stream);
                 }
             }
         }
 
-        private bool TryRead(XmlReader cfgFile)
+        private void ReadProperties(Stream stream)
         {
-            try
+            using (XmlReader cfgFile = XmlReader.Create(stream))
             {
                 cfgFile.Read();
                 ReadInProperties(cfgFile);
             }
-            catch (Exception)
+        }
+
+        private void CreateDefaultConfigFile(Stream stream)
+        {
+            stream.SetLength(0);
+            using (XmlWriter ou = XmlWriter.Create(stream))
             {
-                return false;
+                ou.WriteStartElement("root");
+                ou.WriteElementString("position", "10");
+                ou.WriteElementString("font-size", "6");
+                ou.WriteEndElement();
             }
-            return true;
         }
 
         private void ReadInProperties(XmlReader cfgFile)
