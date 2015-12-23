@@ -5,7 +5,7 @@ namespace ComputerGadget.View
 {
     public interface IDataViwer
     {
-        void Draw(Graphics graphics, Rectangle clip, ICounter counter);
+        void Draw(Graphics graphics, Rectangle clip, IPerformanceDataCollector counter);
         Theme Theme { set; get; }
     }
 }

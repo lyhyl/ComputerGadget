@@ -33,7 +33,7 @@ namespace ComputerGadget.View
             bgbrush = new SolidBrush(Theme.BackgroundColor);
         }
 
-        public void Draw(Graphics graphics, Rectangle clip, ICounter counter)
+        public void Draw(Graphics graphics, Rectangle clip, IPerformanceDataCollector counter)
         {
             int sampleSize = (int)Math.Ceiling((double)clip.Width / DotSize);
             IReadOnlyList<double>[] data = counter.UpdateAndGetData(sampleSize);
@@ -42,7 +42,7 @@ namespace ComputerGadget.View
             graphics.FillRectangle(bgbrush, clip);
             DrawData(graphics, clip, data, width);
             DrawSeprator(graphics, clip, width, data.Length);
-            DrawMessage(graphics, counter.Message, width);
+            DrawMessage(graphics, counter.BriefMessage, width);
         }
 
         protected abstract void DrawSingleData(Graphics graphics, Rectangle clip, float x, float h);

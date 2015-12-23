@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ComputerGadget.Counter
 {
-    public sealed class NetPerformanceCounter : ICounter
+    public sealed class NetPerformanceCounter : IPerformanceDataCollector
     {
         private const long K = 1024;
         private const long K5 = K * 5;
@@ -53,7 +53,7 @@ namespace ComputerGadget.Counter
             lastTime = DateTime.Now.Ticks;
         }
 
-        public string Message { set; get; }
+        public string BriefMessage { set; get; }
 
         public IReadOnlyList<double>[] UpdateAndGetData(int sampleSize)
         {
@@ -133,7 +133,7 @@ namespace ComputerGadget.Counter
                     msg.Append(UnitsName[Units.FindIndex(v => v == limitUnit[ni.Name])]);
                     msg.Append('|');
                 }
-            Message = msg.ToString(0, msg.Length - 1);
+            BriefMessage = msg.ToString(0, msg.Length - 1);
         }
 
         private int AvailableCount()

@@ -16,7 +16,7 @@ namespace ComputerGadget
 
         private Config config = new Config();
         private Timer updateTimer = new Timer();
-        private List<ICounter> counters = null;
+        private List<IPerformanceDataCollector> counters = null;
         private IDataViwer viewer = null;
 
         public ComputerGadget()
@@ -69,10 +69,11 @@ namespace ComputerGadget
 
         private void CreateCounterView()
         {
-            counters = new List<ICounter>()
+            counters = new List<IPerformanceDataCollector>()
             {
                 new CPUPerformanceCounter(),
                 new RAMPerformanceCounter(),
+                new DiskPerformanceCounter(),
                 new NetPerformanceCounter(),
             };
             viewer = new DotView(config.FontSize);

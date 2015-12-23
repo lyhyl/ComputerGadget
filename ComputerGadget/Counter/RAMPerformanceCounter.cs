@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace ComputerGadget.Counter
 {
-    public sealed class RAMPerformanceCounter : ICounter
+    public sealed class RAMPerformanceCounter : IPerformanceDataCollector
     {
         private static class NativeMethods
         {
@@ -39,7 +39,7 @@ namespace ComputerGadget.Counter
         private double lastData = 0;
         private List<double> data = new List<double>();
 
-        public string Message => $"{total} MB:{Math.Round(lastData * 100)}%";
+        public string BriefMessage => $"{total} MB:{Math.Round(lastData * 100)}%";
 
         public RAMPerformanceCounter()
         {

@@ -2,9 +2,9 @@
 
 namespace ComputerGadget.Counter
 {
-    public interface ICounter
+    public interface IPerformanceDataCollector
     {
         IReadOnlyList<double>[] UpdateAndGetData(int sampleSize);
-        string Message { get; }
+        string BriefMessage { get; }
     }
 }
