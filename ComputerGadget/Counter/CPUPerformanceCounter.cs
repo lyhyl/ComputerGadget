@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Text;
 
 namespace ComputerGadget.Counter
@@ -41,8 +40,7 @@ namespace ComputerGadget.Counter
                     data.Add(s, new List<double>());
                 }
         }
-
-
+        
         public IReadOnlyList<double>[] UpdateAndGetData(int sampleSize)
         {
             UpdateData((int)Math.Ceiling((double)sampleSize / data.Count));
@@ -60,7 +58,9 @@ namespace ComputerGadget.Counter
                 {
                     counter.InstanceName = s;
                     CounterSample newSample = counter.NextSample();
-                    data[s].Add(Calculate(samples[s], newSample));
+                    float dat = CounterSampleCalculator.ComputeCounterValue(samples[s], newSample);
+                    //Debug.WriteLine($"CPU {s} {dat}");
+                    data[s].Add(dat / 100);
                     samples[s] = newSample;
                     if (data[s].Count > sampleSize)
                         data[s].RemoveRange(0, data[s].Count - sampleSize);
@@ -68,19 +68,6 @@ namespace ComputerGadget.Counter
         }
 
         private bool IsCore(string s) => !s.Contains("_Total");
-
-        private double Calculate(CounterSample oldSample, CounterSample newSample)
-        {
-            double difference = newSample.RawValue - oldSample.RawValue;
-            double timeInterval = newSample.TimeStamp100nSec - oldSample.TimeStamp100nSec;
-            if (timeInterval != 0)
-            {
-                double v = difference / timeInterval;
-                return 1 - Math.Min(Math.Max(0, v), 1);
-            }
-            else
-                return 0;
-        }
 
         public void Dispose()
         {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -64,7 +65,10 @@ namespace ComputerGadget.Counter
             List<IReadOnlyList<double>> dat = new List<IReadOnlyList<double>>();
             foreach (var ni in interfaces)
                 if (available[ni.Name])
-                    dat.Add(data[ni.Name].ConvertAll(v => v / limitUnit[ni.Name]));
+                    dat.Add(data[ni.Name].ConvertAll((v) => {
+                        //Debug.WriteLine($"Net {v / limitUnit[ni.Name]}");
+                        return v / limitUnit[ni.Name];
+                    }));
             return dat.ToArray();
         }
 

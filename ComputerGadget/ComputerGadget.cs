@@ -12,11 +12,9 @@ namespace ComputerGadget
         private const int itemWidth = 200;
         private const int itemHeight = 50;
         private const int padding = 5;
-
-        private Color transparencyKey = Color.FromArgb(0, 255, 0);
+        private readonly Color transparencyKey = Color.FromArgb(0, 255, 0);
 
         private Config config = new Config();
-
         private Timer updateTimer = new Timer();
         private List<ICounter> counters = null;
         private IDataViwer viewer = null;
@@ -61,21 +59,21 @@ namespace ComputerGadget
             delayActiveTimer.Interval = 1000;
             delayActiveTimer.Tick += DelayActiveTimer_Tick;
 
+            easeOpacityTimer.Interval = easeTimePerTick;
+            easeOpacityTimer.Tick += EaseOpacityTimer_Tick;
+
             updateTimer.Interval = normalUpdataTime;
             updateTimer.Tick += (s, e) => { Invalidate(); };
             updateTimer.Start();
-
-            easeOpacityTimer.Interval = easeTimePerTick;
-            easeOpacityTimer.Tick += EaseOpacityTimer_Tick;
         }
 
         private void CreateCounterView()
         {
             counters = new List<ICounter>()
             {
-                new NetPerformanceCounter(),
                 new CPUPerformanceCounter(),
                 new RAMPerformanceCounter(),
+                new NetPerformanceCounter(),
             };
             viewer = new DotView(config.FontSize);
         }

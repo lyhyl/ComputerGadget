@@ -42,10 +42,16 @@ namespace ComputerGadget
         {
             long now = DateTime.Now.Ticks;
             if (globalHooks && DesktopBounds.Contains(e.Location) && InsideDataView(PointToClient(e.Location)))
+            {
                 if (!delayActiveTimer.Enabled)
                     delayActiveTimer.Start();
-                else if (delayActiveTimer.Enabled)
-                    delayActiveTimer.Stop();
+                //Debug.WriteLine("Enter");
+            }
+            else if (delayActiveTimer.Enabled)
+            {
+                delayActiveTimer.Stop();
+                //Debug.WriteLine("Leave");
+            }
         }
 
         private void SetHookState(bool state)

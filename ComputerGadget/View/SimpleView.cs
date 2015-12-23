@@ -63,7 +63,7 @@ namespace ComputerGadget.View
                 for (int j = data[i].Count - 1; j >= 0; j--)
                 {
                     float x = (i + 1) * width - (dat.Count - j - 0.5f) * DotSize;
-                    float h = (float)(1 - dat[j]) * (clip.Height - Padding * 2) + Padding;
+                    float h = (float)(1 - dat[j]) * (clip.Height - Padding * 2 - 1) + Padding;
                     if (x < i * width)
                         break;
                     DrawSingleData(graphics, clip, x, h);
