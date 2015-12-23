@@ -49,8 +49,8 @@ namespace ComputerGadget.Counter
                     counter.InstanceName = s;
                     CounterSample newSample = counter.NextSample();
                     float dat = CounterSampleCalculator.ComputeCounterValue(samples[s], newSample);
-                    //Debug.WriteLine($"CPU {s} {dat}");
-                    data[s].Add(dat / 100);
+                    //Debug.WriteLine($"bi {s} {dat}");
+                    data[s].Add(Math.Min(dat / 100, 1));
                     samples[s] = newSample;
                     if (data[s].Count > sampleSize)
                         data[s].RemoveRange(0, data[s].Count - sampleSize);
