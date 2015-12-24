@@ -59,8 +59,11 @@ namespace ComputerGadget
             delayActiveTimer.Interval = 1000;
             delayActiveTimer.Tick += DelayActiveTimer_Tick;
 
-            easeOpacityTimer.Interval = easeTimePerTick;
+            easeOpacityTimer.Interval = easeOpacityInterval;
             easeOpacityTimer.Tick += EaseOpacityTimer_Tick;
+
+            easeLocationTimer.Interval = easeLocationInterval;
+            easeLocationTimer.Tick += EaseLocationTimer_Tick;
 
             updateTimer.Interval = normalUpdataTime;
             updateTimer.Tick += (s, e) => { Invalidate(); };

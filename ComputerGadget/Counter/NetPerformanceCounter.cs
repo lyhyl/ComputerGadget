@@ -58,7 +58,9 @@ namespace ComputerGadget.Counter
         public IReadOnlyList<double>[] UpdateAndGetData(int sampleSize)
         {
             UpdateAvailable();
-            UpdateData((int)Math.Ceiling((double)sampleSize / AvailableCount()));
+            int availableCount = AvailableCount();
+            int subsampleSize = (int)Math.Ceiling((double)sampleSize / Math.Max(1, availableCount));
+            UpdateData(subsampleSize);
             UpdateUnit();
             UpdateMessage();
 
@@ -124,16 +126,21 @@ namespace ComputerGadget.Counter
 
         private void UpdateMessage()
         {
-            StringBuilder msg = new StringBuilder();
-            foreach (var ni in interfaces)
-                if (available[ni.Name])
-                {
-                    msg.Append(ni.Name);
-                    msg.Append(':');
-                    msg.Append(UnitsName[Units.FindIndex(v => v == limitUnit[ni.Name])]);
-                    msg.Append('|');
-                }
-            BriefMessage = msg.ToString(0, msg.Length - 1);
+            if (AvailableCount() == 0)
+                BriefMessage = "No network avaliable";
+            else
+            {
+                StringBuilder msg = new StringBuilder();
+                foreach (var ni in interfaces)
+                    if (available[ni.Name])
+                    {
+                        msg.Append(ni.Name);
+                        msg.Append(':');
+                        msg.Append(UnitsName[Units.FindIndex(v => v == limitUnit[ni.Name])]);
+                        msg.Append('|');
+                    }
+                BriefMessage = msg.ToString(0, msg.Length - 1);
+            }
         }
 
         private int AvailableCount()

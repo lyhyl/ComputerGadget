@@ -6,14 +6,14 @@ namespace ComputerGadget
 {
     public partial class ComputerGadget
     {
-        private const int easeFPS = 50;
-        private const int easeTimePerTick = 1000 / easeFPS;
-        private const double focusOpacity = .7;
-        private const double leaveOpacity = .3;
+        private const int easeOpacityFPS = 50;
+        private const int easeOpacityInterval = 1000 / easeOpacityFPS;
+        private const double focusOpacity = .8;
+        private const double leaveOpacity = .2;
 
-        private double targetOpacity = .7;
+        private double targetOpacity = leaveOpacity;
         private Timer easeOpacityTimer = new Timer();
-        private double easePerTick = (1.0 / easeFPS) * 1.5;
+        private double easeOpacityPerTick = (1.0 / easeOpacityFPS) * 1.5;
 
         protected override void OnMouseEnter(EventArgs e)
         {
@@ -76,15 +76,15 @@ namespace ComputerGadget
 
         private void EaseOpacityTimer_Tick(object sender, EventArgs e)
         {
-            if (Math.Abs(Opacity - targetOpacity) < easePerTick)
+            if (Math.Abs(Opacity - targetOpacity) < easeOpacityPerTick)
             {
                 Opacity = targetOpacity;
                 easeOpacityTimer.Stop();
             }
             else if (Opacity < targetOpacity)
-                Opacity += easePerTick;
+                Opacity += easeOpacityPerTick;
             else
-                Opacity -= easePerTick;
+                Opacity -= easeOpacityPerTick;
         }
 
         private void EaseOpacityTo(double opacity)

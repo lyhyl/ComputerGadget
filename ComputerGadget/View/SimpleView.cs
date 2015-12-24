@@ -37,12 +37,18 @@ namespace ComputerGadget.View
         {
             int sampleSize = (int)Math.Ceiling((double)clip.Width / DotSize);
             IReadOnlyList<double>[] data = counter.UpdateAndGetData(sampleSize);
-            float width = (float)clip.Width / data.Length;
 
             graphics.FillRectangle(bgbrush, clip);
-            DrawData(graphics, clip, data, width);
-            DrawSeprator(graphics, clip, width, data.Length);
-            DrawMessage(graphics, counter.BriefMessage, width);
+
+            if (data.Length > 0)
+            {
+                float width = (float)clip.Width / data.Length;
+                DrawData(graphics, clip, data, width);
+                DrawSeprator(graphics, clip, width, data.Length);
+                DrawMessage(graphics, counter.BriefMessage, width);
+            }
+            else
+                DrawMessage(graphics, counter.BriefMessage, clip.Width);
         }
 
         protected abstract void DrawSingleData(Graphics graphics, Rectangle clip, float x, float h);

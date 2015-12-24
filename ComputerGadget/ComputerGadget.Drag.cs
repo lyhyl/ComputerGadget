@@ -1,21 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ComputerGadget
 {
     public partial class ComputerGadget
     {
+        private const int easeLocationFPS = 50;
+        private const int easeLocationInterval = 1000 / easeLocationFPS;
+
         private bool dragging = false;
         private Point prvLocation;
+
+        private Point targetLocation = new Point();
+        private Timer easeLocationTimer = new Timer();
+        private double easeLocationPercentagePerTick = .75;
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
+            if (easeLocationTimer.Enabled)
+                easeLocationTimer.Stop();
             switch (e.Button)
             {
                 case MouseButtons.Left:
@@ -74,7 +79,32 @@ namespace ComputerGadget
                 center.Y = screen.Top;
             else
                 center.Y = screen.Bottom;
-            Location = new Point(center.X - Width / 2, center.Y - Height / 2);
+            EaseLocationTo(new Point(center.X - Width / 2, center.Y - Height / 2));
+        }
+        
+        private void EaseLocationTo(Point location)
+        {
+            targetLocation = location;
+            if (!easeLocationTimer.Enabled)
+                easeLocationTimer.Start();
+        }
+
+        private void EaseLocationTimer_Tick(object sender, EventArgs e)
+        {
+            int dx = targetLocation.X - Location.X;
+            int dy = targetLocation.Y - Location.Y;
+            int lensq = dx * dx + dy * dy;
+            if (lensq < 2)
+            {
+                Location = targetLocation;
+                easeLocationTimer.Stop();
+            }
+            else
+            {
+                int nx = (int)Math.Round(Location.X + dx * easeLocationPercentagePerTick);
+                int ny = (int)Math.Round(Location.Y + dy * easeLocationPercentagePerTick);
+                Location = new Point(nx, ny);
+            }
         }
 
         private int Clamp(int min,int max,int v)

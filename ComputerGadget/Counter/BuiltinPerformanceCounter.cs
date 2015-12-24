@@ -33,7 +33,8 @@ namespace ComputerGadget.Counter
         
         public IReadOnlyList<double>[] UpdateAndGetData(int sampleSize)
         {
-            UpdateData((int)Math.Ceiling((double)sampleSize / data.Count));
+            int subsampleSize = (int)Math.Ceiling((double)sampleSize / Math.Max(1, data.Count));
+            UpdateData(subsampleSize);
             IReadOnlyList<double>[] dat = new IReadOnlyList<double>[data.Count];
             int i = 0;
             foreach (var d in data)

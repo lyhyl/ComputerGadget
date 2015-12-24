@@ -8,6 +8,8 @@ namespace ComputerGadget.Counter
         {
             get
             {
+                if (data.Count == 0)
+                    return "CPU data not available";
                 StringBuilder msg = new StringBuilder();
                 for (int i = 0; i < data.Count; i++)
                 {
