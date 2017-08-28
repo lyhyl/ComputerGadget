@@ -9,16 +9,6 @@ namespace ComputerGadget
         private const int normalUpdataTime = 1000;
         private const int lowUpdateTime = 2000;
 
-        private void ExtendDispose(bool disposing)
-        {
-            if (disposing)
-            {
-                foreach (var counter in counters)
-                    (counters as IDisposable)?.Dispose();
-                (viewer as IDisposable)?.Dispose();
-            }
-        }
-
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
@@ -49,24 +39,32 @@ namespace ComputerGadget
         {
             if (viewer is DotView)
                 return;
-            viewer = new DotView(config.FontSize);
+            viewer = new DotView(config.FontSize) { Theme = theme };
         }
 
         private void stripToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (viewer is StripView)
                 return;
-            viewer = new StripView(config.FontSize);
+            viewer = new StripView(config.FontSize) { Theme = theme };
         }
 
         private void darkToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            viewer.Theme = Theme.DarkTheme;
+            theme = Theme.Dark;
+            viewer.Theme = theme;
         }
 
         private void lightToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            viewer.Theme = Theme.LightTheme;
+            theme = Theme.Light;
+            viewer.Theme = theme;
+        }
+
+        private void doraemonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            theme = Theme.Doraemon;
+            viewer.Theme = theme;
         }
     }
 }

@@ -1,7 +1,10 @@
 ﻿using ComputerGadget.Counter;
 using ComputerGadget.View;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Windows.Forms;
 
@@ -16,7 +19,10 @@ namespace ComputerGadget
 
         private Config config = new Config();
         private Timer updateTimer = new Timer();
+
         private List<IPerformanceDataCollector> counters = null;
+
+        private Theme theme = Theme.Light;
         private IDataViwer viewer = null;
 
         public ComputerGadget()
@@ -37,11 +43,43 @@ namespace ComputerGadget
 
             e.Graphics.FillRectangle(new SolidBrush(transparencyKey), e.ClipRectangle);
             Rectangle clip = new Rectangle(0, 0, itemWidth, itemHeight);
-            
+
             foreach (var counter in counters)
             {
                 viewer.Draw(e.Graphics, clip, counter);
                 e.Graphics.TranslateTransform(0, itemHeight + padding);
+            }
+
+            if (theme.BackgroundImage != null)
+                DrawImage(e, clip, .25f);
+        }
+
+        private void DrawImage(PaintEventArgs e, Rectangle clip, float alpha)
+        {
+            e.Graphics.Transform = new Matrix();
+            float[][] rawMat = {
+                new float[] {1, 0, 0, 0, 0},
+                new float[] {0, 1, 0, 0, 0},
+                new float[] {0, 0, 1, 0, 0},
+                new float[] {0, 0, 0, alpha, 0},
+                new float[] {0, 0, 0, 0, 1}
+            };
+            ColorMatrix alphaMat = new ColorMatrix(rawMat);
+            ImageAttributes imgAttributes = new ImageAttributes();
+            imgAttributes.SetColorMatrix(alphaMat, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+            int x = (Width - theme.BackgroundImage.Width) / 2;
+            int y = (Height - theme.BackgroundImage.Height) / 2;
+            Point[] coners = new Point[] {
+                new Point(x, y),
+                new Point(x + theme.BackgroundImage.Width, y),
+                new Point(x, y + theme.BackgroundImage.Height)
+            };
+            Rectangle srcRect = new Rectangle(Point.Empty, theme.BackgroundImage.Size);
+            for (int i = 0; i < counters.Count; i++)
+            {
+                e.Graphics.Clip = new Region(clip);
+                e.Graphics.DrawImage(theme.BackgroundImage, coners, srcRect, GraphicsUnit.Pixel, imgAttributes);
+                clip.Offset(0, itemHeight + padding);
             }
         }
 
@@ -79,7 +117,18 @@ namespace ComputerGadget
                 new DiskPerformanceCounter(),
                 new NetPerformanceCounter(),
             };
-            viewer = new DotView(config.FontSize);
+            viewer = new DotView(config.FontSize) { Theme = theme };
+        }
+
+        private void ExtendDispose(bool disposing)
+        {
+            if (disposing)
+            {
+                foreach (var counter in counters)
+                    (counters as IDisposable)?.Dispose();
+                (viewer as IDisposable)?.Dispose();
+                theme?.Dispose();
+            }
         }
     }
 }

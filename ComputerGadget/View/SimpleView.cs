@@ -13,7 +13,7 @@ namespace ComputerGadget.View
         protected int DotSize { private set; get; } = 1;
         protected float Padding { private set; get; } = 1;
 
-        private Theme theme = Theme.DarkTheme;
+        private Theme theme = Theme.Dark;
         private Brush bgbrush;
         public Theme Theme
         {
