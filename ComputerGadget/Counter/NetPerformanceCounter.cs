@@ -139,7 +139,7 @@ namespace ComputerGadget.Counter
                         msg.Append(UnitsName[Units.FindIndex(v => v == limitUnit[ni.Name])]);
                         msg.Append('|');
                     }
-                BriefMessage = msg.ToString(0, msg.Length - 1);
+                BriefMessage = msg.ToString(0, Math.Max(0, msg.Length - 1));
             }
         }
 
