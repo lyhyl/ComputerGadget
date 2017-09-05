@@ -22,7 +22,7 @@ namespace ComputerGadget
 
         private List<IPerformanceDataCollector> counters = null;
 
-        private Theme theme = Theme.Light;
+        private Theme theme = Theme.Dark;
         private IDataViwer viewer = null;
 
         public ComputerGadget()
@@ -85,6 +85,7 @@ namespace ComputerGadget
 
         private void SetVisualStyle()
         {
+            TopMost = true;
             MinimumSize = new Size(0, 0);
             TransparencyKey = transparencyKey;
             Opacity = leaveOpacity;
@@ -117,7 +118,7 @@ namespace ComputerGadget
                 new DiskPerformanceCounter(),
                 new NetPerformanceCounter(),
             };
-            viewer = new DotView(config.FontSize) { Theme = theme };
+            viewer = new StripView(config.FontSize) { Theme = theme };
         }
 
         private void ExtendDispose(bool disposing)

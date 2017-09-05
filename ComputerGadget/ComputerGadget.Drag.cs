@@ -57,29 +57,34 @@ namespace ComputerGadget
         private void DockToClosestEdge()
         {
             Point center = PointToScreen(new Point(Width / 2, Height / 2));
-            Rectangle screen = Screen.PrimaryScreen.WorkingArea;
-            if (screen.Width < Width || screen.Height < Height)
-                return;
-            screen.X += Width / 2 + padding;
-            screen.Y += Height / 2 + padding;
-            screen.Width -= Width + padding * 2;
-            screen.Height -= Height + padding * 2;
-            center.X = Clamp(screen.Left, screen.Right, center.X);
-            center.Y = Clamp(screen.Top, screen.Bottom, center.Y);
-            int[] d = new int[4] {
-                center.X - screen.Left, screen.Right - center.X,
-                center.Y - screen.Top, screen.Bottom - center.Y
-            };
-            int mind = Math.Min(Math.Min(d[0], d[1]), Math.Min(d[2], d[3]));
-            if (mind == d[0])
-                center.X = screen.Left;
-            else if (mind == d[1])
-                center.X = screen.Right;
-            else if (mind == d[2])
-                center.Y = screen.Top;
-            else
-                center.Y = screen.Bottom;
-            EaseLocationTo(new Point(center.X - Width / 2, center.Y - Height / 2));
+            foreach (var screen in Screen.AllScreens)
+            {
+                Rectangle area = screen.WorkingArea;
+                if (area.Contains(center)) {
+                    if (area.Width < Width || area.Height < Height)
+                        return;
+                    area.X += Width / 2 + padding;
+                    area.Y += Height / 2 + padding;
+                    area.Width -= Width + padding * 2;
+                    area.Height -= Height + padding * 2;
+                    center.X = Clamp(area.Left, area.Right, center.X);
+                    center.Y = Clamp(area.Top, area.Bottom, center.Y);
+                    int[] d = new int[4] {
+                        center.X - area.Left, area.Right - center.X,
+                        center.Y - area.Top, area.Bottom - center.Y
+                    };
+                    int mind = Math.Min(Math.Min(d[0], d[1]), Math.Min(d[2], d[3]));
+                    if (mind == d[0])
+                        center.X = area.Left;
+                    else if (mind == d[1])
+                        center.X = area.Right;
+                    else if (mind == d[2])
+                        center.Y = area.Top;
+                    else
+                        center.Y = area.Bottom;
+                    EaseLocationTo(new Point(center.X - Width / 2, center.Y - Height / 2));
+                }
+            }
         }
         
         private void EaseLocationTo(Point location)

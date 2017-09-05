@@ -165,9 +165,11 @@ namespace ComputerGadget.Counter
             switch (ni.NetworkInterfaceType)
             {
                 case NetworkInterfaceType.Wireless80211:
+                case NetworkInterfaceType.Ethernet:
+                case NetworkInterfaceType.Ethernet3Megabit:
+                case NetworkInterfaceType.FastEthernetT:
                 case NetworkInterfaceType.FastEthernetFx:
                 case NetworkInterfaceType.GigabitEthernet:
-                case NetworkInterfaceType.Ethernet:
                     return status[ni.Name] == OperationalStatus.Up;
                 case NetworkInterfaceType.Unknown:
                 case NetworkInterfaceType.Loopback:
@@ -176,11 +178,9 @@ namespace ComputerGadget.Counter
                 case NetworkInterfaceType.BasicIsdn:
                 case NetworkInterfaceType.PrimaryIsdn:
                 case NetworkInterfaceType.Ppp:
-                case NetworkInterfaceType.Ethernet3Megabit:
                 case NetworkInterfaceType.Slip:
                 case NetworkInterfaceType.Atm:
                 case NetworkInterfaceType.GenericModem:
-                case NetworkInterfaceType.FastEthernetT:
                 case NetworkInterfaceType.Isdn:
                 case NetworkInterfaceType.AsymmetricDsl:
                 case NetworkInterfaceType.RateAdaptDsl:

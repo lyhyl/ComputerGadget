@@ -39,6 +39,7 @@ namespace ComputerGadget
             this.colorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.darkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.doraemonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.typeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stripToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,7 +49,6 @@ namespace ComputerGadget
             this.lowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.doraemonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iconMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -84,22 +84,29 @@ namespace ComputerGadget
             this.lightToolStripMenuItem,
             this.doraemonToolStripMenuItem});
             this.colorToolStripMenuItem.Name = "colorToolStripMenuItem";
-            this.colorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.colorToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.colorToolStripMenuItem.Text = "&Color";
             // 
             // darkToolStripMenuItem
             // 
             this.darkToolStripMenuItem.Name = "darkToolStripMenuItem";
-            this.darkToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.darkToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.darkToolStripMenuItem.Text = "&Dark";
             this.darkToolStripMenuItem.Click += new System.EventHandler(this.darkToolStripMenuItem_Click);
             // 
             // lightToolStripMenuItem
             // 
             this.lightToolStripMenuItem.Name = "lightToolStripMenuItem";
-            this.lightToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.lightToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.lightToolStripMenuItem.Text = "&Light";
             this.lightToolStripMenuItem.Click += new System.EventHandler(this.lightToolStripMenuItem_Click);
+            // 
+            // doraemonToolStripMenuItem
+            // 
+            this.doraemonToolStripMenuItem.Name = "doraemonToolStripMenuItem";
+            this.doraemonToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.doraemonToolStripMenuItem.Text = "D&oraemon";
+            this.doraemonToolStripMenuItem.Click += new System.EventHandler(this.doraemonToolStripMenuItem_Click);
             // 
             // typeToolStripMenuItem
             // 
@@ -107,7 +114,7 @@ namespace ComputerGadget
             this.dotToolStripMenuItem,
             this.stripToolStripMenuItem});
             this.typeToolStripMenuItem.Name = "typeToolStripMenuItem";
-            this.typeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.typeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.typeToolStripMenuItem.Text = "&Type";
             // 
             // dotToolStripMenuItem
@@ -157,6 +164,8 @@ namespace ComputerGadget
             // 
             // topToolStripMenuItem
             // 
+            this.topToolStripMenuItem.Checked = true;
+            this.topToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.topToolStripMenuItem.Name = "topToolStripMenuItem";
             this.topToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.topToolStripMenuItem.Text = "&Top";
@@ -168,13 +177,6 @@ namespace ComputerGadget
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
-            // doraemonToolStripMenuItem
-            // 
-            this.doraemonToolStripMenuItem.Name = "doraemonToolStripMenuItem";
-            this.doraemonToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.doraemonToolStripMenuItem.Text = "D&oraemon";
-            this.doraemonToolStripMenuItem.Click += new System.EventHandler(this.doraemonToolStripMenuItem_Click);
             // 
             // ComputerGadget
             // 
